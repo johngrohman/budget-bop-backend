@@ -3,6 +3,8 @@ from typing import List
 from .models import Year
 from uuid import UUID
 from django.shortcuts import get_object_or_404
+from ..month.api import post_month
+from ..month.models import Month
 
 api = Router()
 
@@ -18,7 +20,6 @@ class YearOutSchema(Schema):
 def get_all_years(request):
     return Year.objects.all()
 
-# Get year by it's id
 @api.get('/{year_id}', response=YearOutSchema)
 def get_year_by_id(request, year_id: UUID):
     year = get_object_or_404(Year, id=year_id)
@@ -28,6 +29,14 @@ def get_year_by_id(request, year_id: UUID):
 @api.post("/", response=YearOutSchema)
 def post_year(request, payload: YearInSchema):
     return Year.objects.create(**payload.dict())
+
+# Post a year and populate 12 months
+@api.post('complete/', response=YearOutSchema)
+def post_complete_year(request, payload: YearInSchema):
+    year = Year.objects.create(**payload.dict())
+    for month in ['January','February','March','April','May','June','July','August','September','October','November','December']:
+        Month.objects.create(**{"month":month, "year":year})
+    return year
 
 # Update a year by the id
 @api.patch('/{year_id}', response=YearOutSchema)

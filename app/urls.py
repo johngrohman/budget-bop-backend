@@ -18,11 +18,13 @@ from django.contrib import admin
 from django.urls import path
 from ninja import NinjaAPI
 
+from .api.month.api import api as month_router
 from .api.year.api import api as year_router
 
 api = NinjaAPI(title='Budget Bop API', version='1.0')
 
-api.add_router('/year/', year_router, tags=['Years'])
+api.add_router('/years/', year_router, tags=['Years'])
+api.add_router('/months', month_router, tags=['Months'])
 
 urlpatterns = [
     path('admin/', admin.site.urls),
