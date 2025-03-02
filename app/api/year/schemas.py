@@ -1,5 +1,5 @@
 from ninja import Schema
 
 class YearSchema(Schema):
-    temp_id: int
+    id: int
     year: str
