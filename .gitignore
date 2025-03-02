@@ -1,0 +1,52 @@
+# Byte-compiled and cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.env/
+*.env
+
+# Django secret key, settings, and database
+db.sqlite3
+*.sqlite3
+instance/
+config/settings/local.py
+config/settings/*.local.py
+
+# Environment variables and secrets
+.env
+*.env
+config/.secrets/
+
+# Log files
+logs/
+*.log
+
+# Compiled dependencies
+*.egg-info/
+*.dist-info/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# JetBrains (PyCharm, IntelliJ)
+.idea/
+
+# VSCode
+.vscode/
+
+# Other editors
+*.swp
+*.swo
+
+# Docker
+docker-compose.override.yml
+*.dockerfile
+
+# Deployment-related
+*.pem
+
+# Static & Media files
+staticfiles/
+media/
