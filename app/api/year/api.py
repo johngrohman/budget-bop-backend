@@ -20,6 +20,7 @@ class YearOutSchema(Schema):
 def get_all_years(request):
     return Year.objects.all()
 
+# Get year by id
 @api.get('/{year_id}', response=YearOutSchema)
 def get_year_by_id(request, year_id: UUID):
     year = get_object_or_404(Year, id=year_id)

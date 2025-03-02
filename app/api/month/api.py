@@ -28,7 +28,7 @@ def get_month_by_id(request, month_id: UUID):
     month = get_object_or_404(Month, id=month_id)
     return month
 
-# Update a month by the id
+# Create a month
 @api.post('/', response=MonthOutSchema)
 def post_month(request, payload: MonthInSchema):
     year = get_object_or_404(Year, year=payload.year)
@@ -38,6 +38,7 @@ def post_month(request, payload: MonthInSchema):
     }
     return Month.objects.create(**result)
 
+# Update a month by the id
 @api.patch('/{month_id}', response=MonthOutSchema)
 def patch_month(request, month_id: UUID, payload: MonthInSchema):
     month = get_object_or_404(Month, id=month_id)
