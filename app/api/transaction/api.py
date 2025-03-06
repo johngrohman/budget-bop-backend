@@ -1,0 +1,86 @@
+from ninja import Query, Router, Schema, FilterSchema
+from typing import List
+from .models import Transaction
+from ..month.schemas import MonthSchema
+from ..year.schemas import YearSchema
+from datetime import date, datetime
+from uuid import UUID
+from django.shortcuts import get_object_or_404
+from typing import Optional
+
+api = Router()
+
+class TransactionInSchema(Schema):
+    date: date
+    amount: float
+    description: str
+    category: str
+    month_id: MonthSchema
+    year_id: YearSchema
+
+
+class TransactionOutSchema(Schema):
+    id: UUID
+    date: date
+    amount: float
+    description: str
+    category: str
+    month_id: MonthSchema
+    year_id: YearSchema
+
+class TransactionFilterSchema(FilterSchema):
+    date: Optional[datetime] = None
+    amount: Optional[float] = None
+    description: Optional[str] = None
+    category: Optional[str] = None
+    month_id: Optional[UUID] = None
+    year_id: Optional[UUID] = None
+
+# Get all transactions
+@api.get('/', response=List[TransactionOutSchema])
+def get_all_transactions(request):
+    return Transaction.objects.all()
+
+# Get transaction by id
+@api.get('/{transaction_id}', response=TransactionOutSchema)
+def get_transaction_by_id(request, transaction_id: UUID):
+    transaction = get_object_or_404(Transaction, id=transaction_id)
+
+# Post new transaction
+@api.post('/', response=TransactionOutSchema)
+def post_transaction(request, payload: TransactionInSchema):
+    return Transaction.objects.create(**payload.dict())
+
+# Patch transaction
+@api.patch('/{year_id}', response=TransactionOutSchema)
+def patch_year(request, transaction_id: UUID, payload: TransactionInSchema):
+    transaction = get_object_or_404(Transaction, id=transaction_id)
+
+    for attr in TransactionInSchema:
+        if attr in payload:
+            setattr(transaction, str(attr), payload[attr])
+
+    transaction.save()
+    return transaction
+
+# Delete Transaction
+@api.delete('/{transaction_id}')
+def delete_transaction(request, transaction_id: UUID):
+    transaction = get_object_or_404(Transaction, id=transaction_id)
+    transaction.delete()
+    return{"success":True}
+
+# Get transaction and filter by date, amount, description, category, month, year
+@api.get('/', response=List[TransactionOutSchema])
+def list_transactions(request, filters: TransactionFilterSchema = Query(...)):
+    transactions = Transaction.objects.all()
+    transactions = filters.filter(transactions)
+    return transactions
+
+# Get total transactions by date, amount, description, category, month, year
+# Get trends over time
+# Post bulk upload transactions
+# Delete multiple transactions
+# Post transaction refund
+# Post transaction pending
+# Post transaction cancellation

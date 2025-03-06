@@ -21,12 +21,14 @@ from ninja import NinjaAPI
 from .api.month.api import api as month_router
 from .api.year.api import api as year_router
 from .api.savings.api import api as savings_router
+from .api.transaction.api import api as transaction_router
 
 api = NinjaAPI(title='Budget Bop API', version='1.0')
 
 api.add_router('/years', year_router, tags=['Years'])
 api.add_router('/months', month_router, tags=['Months'])
 api.add_router('/savings', savings_router, tags=['Savings'])
+api.add_router('/transactions', transaction_router, tags=['Transactions'])
 
 urlpatterns = [
     path('admin/', admin.site.urls),

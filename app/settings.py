@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'app.api.year',
     'app.api.month',
-    'app.api.savings'
+    'app.api.savings',
+    'app.api.transaction'
 ]
 
 MIDDLEWARE = [

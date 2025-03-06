@@ -1,5 +1,5 @@
-from ninja import Router, Schema
-from typing import List
+from ninja import Query, Router, Schema, FilterSchema
+from typing import List, Optional
 from .models import Month
 from ..year.schemas import YearSchema
 from ..year.models import Year
@@ -10,17 +10,19 @@ api = Router()
 
 class MonthInSchema(Schema):
     month: str
-    year: str
 
 class MonthOutSchema(Schema):
     id: UUID
     month: str
     year: YearSchema
 
+class MonthFilterSchema(FilterSchema):
+    year_id: Optional[UUID] = None
+
 # Get all months stored in database
-@api.get('/', response=List[MonthOutSchema])
-def get_all_months(request):
-    return Month.objects.all()
+# @api.get('/', response=List[MonthOutSchema])
+# def get_all_months(request):
+#     return Month.objects.all()
 
 # Get month by id
 @api.get('/{month_id}', response=MonthOutSchema)
@@ -53,3 +55,8 @@ def delete_month(request, month_id: UUID):
     month = get_object_or_404(Month, id=month_id)
     month.delete()
     return {"success": True}
+
+@api.get('year/{year_id}', response=List[MonthOutSchema])
+def list_months_in_year(request, year_id: UUID):
+    months = Month.objects.filter(year__id = year_id)
+    return months if months.exists() else []

@@ -9,3 +9,6 @@ class Month(models.Model):
 
     def __str__(self):
         return (self.month, self.year.__str__)
+    
+    class Meta:
+        db_table = "Month"

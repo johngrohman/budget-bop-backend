@@ -1,23 +1,25 @@
 from django.db import models
 from ..month.models import Month
+from ..year.models import Year
 import uuid
 
-class Savings(models.Model):
+class Transaction(models.Model):
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
-    name = models.CharField(max_length=100)
-    budget = models.IntegerField()
-    actual = models.FloatField()
     date = models.DateField()
+    amount = models.FloatField()
+    description = models.CharField()
+    category = models.CharField()
     month = models.ForeignKey(Month, null=True, on_delete=models.CASCADE)
+    year = models.ForeignKey(Year, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return {
-            self.name,
-            self.budget,
-            self.actual,
             self.date,
+            self.amount,
+            self.description,
+            self.category,
             self.month
         }
 
     class Meta:
-        db_table = "Savings"
+        db_table = "Transaction"

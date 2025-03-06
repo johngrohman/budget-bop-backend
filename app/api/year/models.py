@@ -7,3 +7,6 @@ class Year(models.Model):
 
     def __str__(self):
         return self.year
+    
+    class Meta:
+        db_table = "Year"
