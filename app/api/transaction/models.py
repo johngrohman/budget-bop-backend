@@ -10,7 +10,6 @@ class Transaction(models.Model):
     description = models.CharField()
     category = models.CharField()
     month = models.ForeignKey(Month, null=True, on_delete=models.CASCADE)
-    year = models.ForeignKey(Year, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return {
