@@ -1,4 +1,6 @@
-from ninja import Query, Router, Schema, FilterSchema
+import csv
+from ninja import Query, Router, Schema, FilterSchema, File, Form
+from ninja.files import UploadedFile
 from typing import List
 from .models import Transaction
 from ..month.schemas import MonthSchema
@@ -7,16 +9,20 @@ from datetime import date, datetime
 from uuid import UUID
 from django.shortcuts import get_object_or_404
 from typing import Optional
+from ...utils.transactionparser import format_date
+from django.views.decorators.csrf import csrf_exempt
 
 api = Router()
+
+class UploadFileSchema(Schema):
+    month_id: UUID
 
 class TransactionInSchema(Schema):
     date: date
     amount: float
     description: str
     category: str
-    month_id: MonthSchema
-    year_id: YearSchema
+    month_id: UUID
 
 
 class TransactionOutSchema(Schema):
@@ -25,8 +31,7 @@ class TransactionOutSchema(Schema):
     amount: float
     description: str
     category: str
-    month_id: MonthSchema
-    year_id: YearSchema
+    month: MonthSchema
 
 class TransactionFilterSchema(FilterSchema):
     date: Optional[datetime] = None
@@ -34,7 +39,35 @@ class TransactionFilterSchema(FilterSchema):
     description: Optional[str] = None
     category: Optional[str] = None
     month_id: Optional[UUID] = None
-    year_id: Optional[UUID] = None
+
+# Upload list of transactions of csv type
+@api.post('/upload')
+def upload_transaction_list(request, month_id: UUID = Form(...), file: UploadedFile = File(...)):
+    """
+    Uploads a CSV file, parses it, and inserts transactions into the database.
+    """
+    decoded_file = file.read().decode('utf-8').splitlines()
+    reader = csv.reader(decoded_file)
+    
+    next(reader, None)  # Skip the header row
+
+    transactions = []
+    for row in reader:
+        try:
+            transaction = Transaction(
+                date=format_date(row[2]),
+                amount=float(row[4]),
+                description=row[7],
+                category=row[8],
+                month_id=month_id
+            )
+            transactions.append(transaction)
+        except (IndexError, ValueError) as e:
+            print(f"Skipping invalid row {row}: {e}")
+
+    Transaction.objects.bulk_create(transactions, ignore_conflicts=False)
+
+    return {"message": f"Inserted {len(transactions)} transactions successfully."}
 
 # Get all transactions
 @api.get('/', response=List[TransactionOutSchema])
@@ -53,7 +86,7 @@ def post_transaction(request, payload: TransactionInSchema):
 
 # Patch transaction
 @api.patch('/{year_id}', response=TransactionOutSchema)
-def patch_year(request, transaction_id: UUID, payload: TransactionInSchema):
+def patch_transaction(request, transaction_id: UUID, payload: TransactionInSchema):
     transaction = get_object_or_404(Transaction, id=transaction_id)
 
     for attr in TransactionInSchema:

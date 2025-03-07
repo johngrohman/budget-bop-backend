@@ -9,4 +9,4 @@ class TransactionSchema(Schema):
     amount: float
     description: str
     category: str
-    month_id: MonthSchema
+    month_id: UUID
