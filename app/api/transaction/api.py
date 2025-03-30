@@ -4,7 +4,6 @@ from ninja.files import UploadedFile
 from typing import List
 from .models import Transaction
 from ..month.schemas import MonthSchema
-from ..year.schemas import YearSchema
 from datetime import date, datetime
 from uuid import UUID
 from django.shortcuts import get_object_or_404
@@ -22,8 +21,6 @@ class TransactionInSchema(Schema):
     amount: float
     description: str
     category: str
-    month_id: UUID
-
 
 class TransactionOutSchema(Schema):
     id: UUID
@@ -40,7 +37,6 @@ class TransactionFilterSchema(FilterSchema):
     category: Optional[str] = None
     month_id: Optional[UUID] = None
 
-# Upload list of transactions of csv type
 @api.post('/upload')
 def upload_transaction_list(request, month_id: UUID = Form(...), file: UploadedFile = File(...)):
     """
@@ -69,15 +65,18 @@ def upload_transaction_list(request, month_id: UUID = Form(...), file: UploadedF
 
     return {"message": f"Inserted {len(transactions)} transactions successfully."}
 
-# Get all transactions
-@api.get('/', response=List[TransactionOutSchema])
-def get_all_transactions(request):
-    return Transaction.objects.all()
+# Get transaction and filter by date, amount, description, category, month, year
+@api.get('/list', response=List[TransactionOutSchema])
+def list_transactions(request, filters: TransactionFilterSchema = Query(...)):
+    transactions = Transaction.objects.all()
+    transactions = filters.filter(transactions)
+    return transactions
 
 # Get transaction by id
 @api.get('/{transaction_id}', response=TransactionOutSchema)
 def get_transaction_by_id(request, transaction_id: UUID):
     transaction = get_object_or_404(Transaction, id=transaction_id)
+    return transaction
 
 # Post new transaction
 @api.post('/', response=TransactionOutSchema)
@@ -85,7 +84,7 @@ def post_transaction(request, payload: TransactionInSchema):
     return Transaction.objects.create(**payload.dict())
 
 # Patch transaction
-@api.patch('/{year_id}', response=TransactionOutSchema)
+@api.patch('/{transaction_id}', response=TransactionOutSchema)
 def patch_transaction(request, transaction_id: UUID, payload: TransactionInSchema):
     transaction = get_object_or_404(Transaction, id=transaction_id)
 
@@ -102,13 +101,6 @@ def delete_transaction(request, transaction_id: UUID):
     transaction = get_object_or_404(Transaction, id=transaction_id)
     transaction.delete()
     return{"success":True}
-
-# Get transaction and filter by date, amount, description, category, month, year
-@api.get('/', response=List[TransactionOutSchema])
-def list_transactions(request, filters: TransactionFilterSchema = Query(...)):
-    transactions = Transaction.objects.all()
-    transactions = filters.filter(transactions)
-    return transactions
 
 # Get total transactions by date, amount, description, category, month, year
 # Get trends over time

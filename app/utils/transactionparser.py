@@ -10,7 +10,7 @@ def bulk_transaction_create(file, month_id):
         for row in transaction_reader:
             transaction_object = {
                 'date': row[2],
-                'amount': row[4],
+                'amount': -(row[4]),
                 'description': row[7],
                 'category': row[8],
                 'month_id': month_id

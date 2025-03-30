@@ -41,7 +41,10 @@ INSTALLED_APPS = [
     'app.api.year',
     'app.api.month',
     'app.api.savings',
-    'app.api.transaction'
+    'app.api.transaction',
+    'app.api.income',
+    'app.api.variable_expense',
+    'app.api.fixed_expense',
 ]
 
 MIDDLEWARE = [
