@@ -10,19 +10,34 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('month', '0002_alter_month_table'),
+        ("month", "0002_alter_month_table"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='VariableExpense',
+            name="VariableExpense",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('name', models.CharField()),
-                ('date', models.DateField()),
-                ('budget', models.FloatField()),
-                ('actual', models.FloatField()),
-                ('month', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='month.month')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("name", models.CharField()),
+                ("date", models.DateField()),
+                ("budget", models.FloatField()),
+                ("actual", models.FloatField()),
+                (
+                    "month",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="month.month",
+                    ),
+                ),
             ],
         ),
     ]

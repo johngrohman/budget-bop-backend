@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('variable_expense', '0001_initial'),
+        ("variable_expense", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelTable(
-            name='variableexpense',
-            table='Variable Expense',
+            name="variableexpense",
+            table="Variable Expense",
         ),
     ]

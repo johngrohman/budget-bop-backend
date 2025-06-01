@@ -9,12 +9,14 @@ from django.shortcuts import get_object_or_404
 
 api = Router()
 
+
 class FixedExpenseFilterSchema(FilterSchema):
     name: Optional[str] = None
     due: Optional[datetime] = None
     budget: Optional[float] = None
     actual: Optional[float] = None
     month_id: Optional[UUID] = None
+
 
 class FixedExpenseOutSchema(Schema):
     id: UUID
@@ -24,6 +26,7 @@ class FixedExpenseOutSchema(Schema):
     actual: float
     month: MonthSchema
 
+
 class FixedExpenseInSchema(Schema):
     name: Optional[str] = None
     due: Optional[dateType] = None
@@ -31,20 +34,23 @@ class FixedExpenseInSchema(Schema):
     actual: Optional[float] = None
     month_id: Optional[UUID] = None
 
-@api.get('/', response=List[FixedExpenseOutSchema])
+
+@api.get("/", response=List[FixedExpenseOutSchema])
 def list_fixed_expense(request, filters: FixedExpenseFilterSchema = Query(...)):
     """
     List all fixed expenses based on filters
     """
-    fixed_expenses = FixedExpense.objects.all()
-    fixed_expenses = filters.filter(fixed_expenses)
+    filter_kwargs = filters.dict(exclude_unset=True)
+    fixed_expenses = FixedExpense.objects.filter(**filter_kwargs)
     return fixed_expenses
 
-@api.post('/', response=FixedExpenseOutSchema)
+
+@api.post("/", response=FixedExpenseOutSchema)
 def post_fixed_expense(request, payload: FixedExpenseInSchema):
     return FixedExpense.objects.create(**payload.dict())
 
-@api.patch('/{fixed_expense_id}', response=FixedExpenseOutSchema)
+
+@api.patch("/{fixed_expense_id}", response=FixedExpenseOutSchema)
 def patch_fixed_expense(request, fixed_expense_id: UUID, payload: FixedExpenseInSchema):
     fixed_expense = get_object_or_404(FixedExpense, id=fixed_expense_id)
 
@@ -54,8 +60,12 @@ def patch_fixed_expense(request, fixed_expense_id: UUID, payload: FixedExpenseIn
     fixed_expense.save()
     return fixed_expense
 
-@api.delete('/{fixed_expense_id}')
-def delete_fixed_expense(request, fixed_expense_id: UUID):
-    fixed_expense = get_object_or_404(FixedExpense, id=fixed_expense_id)
-    fixed_expense.delete()
-    return{"success": True}
+
+@api.delete("/")
+def delete_fixed_expense(
+    request, payload: list[UUID]
+):
+    for fix_exp_id in payload:
+        fixed_expense = get_object_or_404(FixedExpense, id=fix_exp_id)
+        fixed_expense.delete()
+    return {"success": True}

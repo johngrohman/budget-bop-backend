@@ -4,3 +4,4 @@ django-cors-headers
 django-ninja
 uvicorn
 psycopg
+black

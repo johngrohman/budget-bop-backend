@@ -8,15 +8,22 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Year',
+            name="Year",
             fields=[
-                ('id_temp', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('year', models.CharField(max_length=4)),
+                (
+                    "id_temp",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("year", models.CharField(max_length=4)),
             ],
         ),
     ]

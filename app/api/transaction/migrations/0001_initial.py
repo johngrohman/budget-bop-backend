@@ -10,24 +10,46 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('year', '0003_alter_year_table'),
-        ('month', '0002_alter_month_table'),
+        ("year", "0003_alter_year_table"),
+        ("month", "0002_alter_month_table"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Transaction',
+            name="Transaction",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('date', models.DateField()),
-                ('amount', models.FloatField()),
-                ('description', models.CharField()),
-                ('category', models.CharField()),
-                ('month', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='month.month')),
-                ('year', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='year.year')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("date", models.DateField()),
+                ("amount", models.FloatField()),
+                ("description", models.CharField()),
+                ("category", models.CharField()),
+                (
+                    "month",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="month.month",
+                    ),
+                ),
+                (
+                    "year",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="year.year",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'Transaction',
+                "db_table": "Transaction",
             },
         ),
     ]

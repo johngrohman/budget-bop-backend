@@ -10,16 +10,31 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('year', '0001_initial'),
+        ("year", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Month',
+            name="Month",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('month', models.CharField()),
-                ('year', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='year.year')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("month", models.CharField()),
+                (
+                    "year",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="year.year",
+                    ),
+                ),
             ],
         ),
     ]

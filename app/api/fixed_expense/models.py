@@ -2,6 +2,7 @@ from django.db import models
 from ..month.models import Month
 import uuid
 
+
 class FixedExpense(models.Model):
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     name = models.CharField()
@@ -18,6 +19,6 @@ class FixedExpense(models.Model):
             self.actual,
             self.month,
         }
-    
+
     class Meta:
         db_table = "Fixed_Expense"

@@ -10,19 +10,34 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('month', '0001_initial'),
+        ("month", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Savings',
+            name="Savings",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('name', models.CharField(max_length=100)),
-                ('budget', models.IntegerField()),
-                ('actual', models.FloatField()),
-                ('date', models.DateField()),
-                ('month', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='month.month')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
+                ("budget", models.IntegerField()),
+                ("actual", models.FloatField()),
+                ("date", models.DateField()),
+                (
+                    "month",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="month.month",
+                    ),
+                ),
             ],
         ),
     ]

@@ -14,6 +14,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path
 from ninja import NinjaAPI
@@ -27,18 +28,18 @@ from .api.income.api import api as income_router
 from .api.variable_expense.api import api as variable_expense_router
 from .api.fixed_expense.api import api as fixed_expense_router
 
-api = NinjaAPI(title='Budget Bop API', version='1.0')
+api = NinjaAPI(title="Budget Bop API", version="1.0")
 
-api.add_router('/years', year_router, tags=['Years'])
-api.add_router('/months', month_router, tags=['Months'])
-api.add_router('/income', income_router, tags=['Income'])
-api.add_router('/variable-expense', variable_expense_router, tags=['Variable Expenses'])
-api.add_router('/fixed-expense', fixed_expense_router, tags=['Fixed Expenses'])
-api.add_router('/savings', savings_router, tags=['Savings'])
-api.add_router('/transactions', transaction_router, tags=['Transactions'])
-api.add_router('/time', time_router, tags=['Time'])
+api.add_router("/years", year_router, tags=["Years"])
+api.add_router("/months", month_router, tags=["Months"])
+api.add_router("/income", income_router, tags=["Income"])
+api.add_router("/variable-expense", variable_expense_router, tags=["Variable Expenses"])
+api.add_router("/fixed-expense", fixed_expense_router, tags=["Fixed Expenses"])
+api.add_router("/savings", savings_router, tags=["Savings"])
+api.add_router("/transactions", transaction_router, tags=["Transactions"])
+api.add_router("/time", time_router, tags=["Time"])
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/', api.urls),
+    path("admin/", admin.site.urls),
+    path("api/", api.urls),
 ]
