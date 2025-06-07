@@ -79,7 +79,7 @@ def upload_transaction_list(
             print(f"Skipping invalid row {row}: {e}")
 
     Transaction.objects.bulk_create(transactions, ignore_conflicts=False)
-
+    sync_vars_trans(month_id=month_id)
     return {"message": f"Inserted {len(transactions)} transactions successfully."}
 
 
@@ -97,10 +97,12 @@ def get_transaction_by_id(request, transaction_id: UUID):
     transaction = get_object_or_404(Transaction, id=transaction_id)
     return transaction
 
+
 @api.get("/month/{month_id}")
 def get_transaction_summary(request, month_id: UUID):
     variable_expenses = sync_vars_trans(month_id=month_id)
     return variable_expenses
+
 
 # Post new transaction
 @api.post("/", response=TransactionOutSchema)
@@ -122,10 +124,11 @@ def patch_transaction(request, transaction_id: UUID, payload: TransactionInSchem
 
 
 # Delete Transaction
-@api.delete("/{transaction_id}")
-def delete_transaction(request, transaction_id: UUID):
-    transaction = get_object_or_404(Transaction, id=transaction_id)
-    transaction.delete()
+@api.delete("/")
+def delete_transaction(request, payload: List[UUID]):
+    for trans_id in payload:
+        transaction = get_object_or_404(Transaction, id=trans_id)
+        transaction.delete()
     return {"success": True}
 
 

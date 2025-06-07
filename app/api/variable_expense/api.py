@@ -74,9 +74,7 @@ def patch_variable_expense(
 
 
 @api.delete("/")
-def delete_variable_expense(
-    request, payload: list[UUID]
-):
+def delete_variable_expense(request, payload: List[UUID]):
     for var_exp_id in payload:
         variable_expense = get_object_or_404(VariableExpense, id=var_exp_id)
         variable_expense.delete()

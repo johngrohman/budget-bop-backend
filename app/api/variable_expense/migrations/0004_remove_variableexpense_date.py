@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('variable_expense', '0003_alter_variableexpense_table'),
+        ("variable_expense", "0003_alter_variableexpense_table"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='variableexpense',
-            name='date',
+            model_name="variableexpense",
+            name="date",
         ),
     ]

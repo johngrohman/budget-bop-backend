@@ -12,7 +12,7 @@ api = Router()
 
 class FixedExpenseFilterSchema(FilterSchema):
     name: Optional[str] = None
-    due: Optional[datetime] = None
+    date: Optional[datetime] = None
     budget: Optional[float] = None
     actual: Optional[float] = None
     month_id: Optional[UUID] = None
@@ -20,16 +20,16 @@ class FixedExpenseFilterSchema(FilterSchema):
 
 class FixedExpenseOutSchema(Schema):
     id: UUID
-    name: str
-    due: dateType
-    budget: float
-    actual: float
-    month: MonthSchema
+    name: Optional[str] = None
+    date: Optional[dateType] = None
+    budget: Optional[float] = None
+    actual: Optional[float] = None
+    month: Optional[MonthSchema] = None
 
 
 class FixedExpenseInSchema(Schema):
     name: Optional[str] = None
-    due: Optional[dateType] = None
+    date: Optional[dateType] = None
     budget: Optional[float] = None
     actual: Optional[float] = None
     month_id: Optional[UUID] = None
@@ -62,9 +62,7 @@ def patch_fixed_expense(request, fixed_expense_id: UUID, payload: FixedExpenseIn
 
 
 @api.delete("/")
-def delete_fixed_expense(
-    request, payload: list[UUID]
-):
+def delete_fixed_expense(request, payload: List[UUID]):
     for fix_exp_id in payload:
         fixed_expense = get_object_or_404(FixedExpense, id=fix_exp_id)
         fixed_expense.delete()

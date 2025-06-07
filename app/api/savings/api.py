@@ -1,6 +1,11 @@
-from ninja import Router, Schema
+from ninja import Router, Schema, Query
 from typing import List
 from .models import Savings
+from .schemas import (
+    SavingsInSchema,
+    SavingsOutSchema,
+    SavingsFilterSchema,
+)
 from ..month.schemas import MonthSchema
 from ..month.models import Month
 from uuid import UUID
@@ -10,27 +15,15 @@ from datetime import date
 api = Router()
 
 
-class SavingsInSchema(Schema):
-    name: str
-    budget: int
-    actual: float
-    date: date
-    month: str
-
-
-class SavingsOutSchema(Schema):
-    id: UUID
-    name: str
-    budget: int
-    actual: float
-    date: date
-    month: MonthSchema
-
-
 # Get all savings stored in database
 @api.get("/", response=List[SavingsOutSchema])
-def get_all_savings(request):
-    return Savings.objects.all()
+def list_all_savings(request, filters: SavingsFilterSchema = Query(...)):
+    """
+    List all savings based on filters
+    """
+    filter_kwargs = filters.dict(exclude_unset=True)
+    savings = Savings.objects.filter(**filter_kwargs)
+    return savings
 
 
 # Get savings by id
@@ -43,27 +36,25 @@ def get_savings_by_id(request, savings_id: UUID):
 # Create a savings object
 @api.post("/", response=SavingsOutSchema)
 def post_savings(request, payload: SavingsInSchema):
-    # Ensure month exists
-    month = get_object_or_404(Month, month=payload.month)
-    result = {
-        "name": payload.name,
-        "budget": payload.budget,
-        "actual": payload.actual,
-        "date": payload.date,
-        "month": month,
-    }
-    return Savings.objects.create(**result)
+    return Savings.objects.create(**payload.dict())
 
 
 # Update a savings object
-# @api.patch('/{savings_id}', response=SavingsOutSchema)
-# def patch_savings(request, savings_id: UUID, payload: SavingsInSchema):
-#     pass
+@api.patch("/{savings_id}", response=SavingsOutSchema)
+def patch_savings(request, savings_id: UUID, payload: SavingsInSchema):
+    savings = get_object_or_404(Savings, id=savings_id)
+
+    for attr, value in payload.dict(exclude_unset=True).items():
+        setattr(savings, attr, value)
+
+    savings.save()
+    return savings
 
 
 # Delete a savings by the id
-@api.delete("/{savings_id}")
-def delete_savings(request, savings_id: UUID):
-    savings = get_object_or_404(Savings, id=savings_id)
-    savings.delete()
+@api.delete("/")
+def delete_savings(request, payload: List[UUID]):
+    for sav_id in payload:
+        savings = get_object_or_404(Savings, id=sav_id)
+        savings.delete()
     return {"success": True}

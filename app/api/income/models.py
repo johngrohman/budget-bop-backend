@@ -5,10 +5,10 @@ import uuid
 
 class Income(models.Model):
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
-    name = models.CharField()
-    date = models.DateField()
-    expected = models.FloatField()
-    actual = models.FloatField()
+    name = models.CharField(null=True)
+    date = models.DateField(null=True)
+    expected = models.FloatField(null=True)
+    actual = models.FloatField(null=True)
     month = models.ForeignKey(Month, null=True, on_delete=models.CASCADE)
 
     def __str__(self):

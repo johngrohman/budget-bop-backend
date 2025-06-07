@@ -20,11 +20,11 @@ class IncomeFilterSchema(FilterSchema):
 
 class IncomeOutSchema(Schema):
     id: UUID
-    name: str
-    date: dateType
-    expected: float
-    actual: float
-    month: MonthSchema
+    name: Optional[str] = None
+    date: Optional[dateType] = None
+    expected: Optional[float] = None
+    actual: Optional[float] = None
+    month: Optional[MonthSchema] = None
 
 
 class IncomeInSchema(Schema):
@@ -61,8 +61,9 @@ def patch_income(request, income_id: UUID, payload: IncomeInSchema):
     return income
 
 
-@api.delete("/{income_id}")
-def delete_income(request, income_id: UUID):
-    income = get_object_or_404(Income, id=income_id)
-    income.delete()
+@api.delete("/")
+def delete_income(request, payload: List[UUID]):
+    for inc_id in payload:
+        income = get_object_or_404(Income, id=inc_id)
+        income.delete()
     return {"success": True}

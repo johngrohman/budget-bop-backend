@@ -6,6 +6,6 @@ from ..month.schemas import MonthSchema
 
 class FixedExpense(Schema):
     id: UUID
-    due: date
+    date: date
     budget: float
     actual: float
