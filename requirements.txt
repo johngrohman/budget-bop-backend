@@ -5,3 +5,4 @@ django-ninja
 uvicorn
 psycopg
 black
+python-dotenv

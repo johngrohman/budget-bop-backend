@@ -1,20 +1,3 @@
-"""
-URL configuration for budgetbop project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/4.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
-
 from django.contrib import admin
 from django.urls import path
 from ninja import NinjaAPI
@@ -28,7 +11,7 @@ from .api.income.api import api as income_router
 from .api.variable_expense.api import api as variable_expense_router
 from .api.fixed_expense.api import api as fixed_expense_router
 
-api = NinjaAPI(title="Budget Bop API", version="1.0")
+api: NinjaAPI = NinjaAPI(title="Budget Bop API", version="1.0")
 
 api.add_router("/years", year_router, tags=["Years"])
 api.add_router("/months", month_router, tags=["Months"])
