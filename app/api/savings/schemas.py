@@ -31,8 +31,8 @@ class SavingsInSchema(Schema):
 
 class SavingsOutSchema(Schema):
     id: UUID
-    name: str
-    budget: int
-    actual: float
-    date: dateType
-    month: MonthSchema
+    name: Optional[str] = None
+    budget: Optional[int] = None
+    actual: Optional[float] = None
+    date: Optional[dateType] = None
+    month: Optional[MonthSchema] = None

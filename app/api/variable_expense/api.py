@@ -57,7 +57,8 @@ def get_variable_expenses_in_month(request, month_id: UUID):
 
 @api.post("/", response=VariableExpenseOutSchema)
 def post_variable_expense(request, payload: VariableExpenseInSchema):
-    return VariableExpense.objects.create(**payload.dict())
+    variable_expense = VariableExpense.objects.create(**payload.dict())
+    return variable_expense
 
 
 @api.patch("/{variable_expense_id}", response=VariableExpenseOutSchema)
@@ -65,10 +66,8 @@ def patch_variable_expense(
     request, variable_expense_id: UUID, payload: VariableExpenseInSchema
 ):
     variable_expense = get_object_or_404(VariableExpense, id=variable_expense_id)
-
     for attr, value in payload.dict(exclude_unset=True).items():
         setattr(variable_expense, attr, value)
-
     variable_expense.save()
     return variable_expense
 

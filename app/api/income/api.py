@@ -47,16 +47,15 @@ def list_income(request, filters: IncomeFilterSchema = Query(...)):
 
 @api.post("/", response=IncomeOutSchema)
 def post_income(request, payload: IncomeInSchema):
-    return Income.objects.create(**payload.dict())
+    income = Income.objects.create(**payload.dict())
+    return income
 
 
 @api.patch("/{income_id}", response=IncomeOutSchema)
 def patch_income(request, income_id: UUID, payload: IncomeInSchema):
     income = get_object_or_404(Income, id=income_id)
-
     for attr, value in payload.dict(exclude_unset=True).items():
         setattr(income, attr, value)
-
     income.save()
     return income
 

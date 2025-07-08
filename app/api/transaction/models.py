@@ -1,10 +1,12 @@
 from django.db import models
+from django.contrib.auth.models import User
 from ..month.models import Month
 from ..year.models import Year
 import uuid
 
 
 class Transaction(models.Model):
+    # user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     date = models.DateField()
     amount = models.FloatField()

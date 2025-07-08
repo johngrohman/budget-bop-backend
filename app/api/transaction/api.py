@@ -107,18 +107,17 @@ def get_transaction_summary(request, month_id: UUID):
 # Post new transaction
 @api.post("/", response=TransactionOutSchema)
 def post_transaction(request, payload: TransactionInSchema):
-    return Transaction.objects.create(**payload.dict())
+    transaction = Transaction.objects.create(**payload.dict())
+    return transaction
 
 
 # Patch transaction
 @api.patch("/{transaction_id}", response=TransactionOutSchema)
 def patch_transaction(request, transaction_id: UUID, payload: TransactionInSchema):
     transaction = get_object_or_404(Transaction, id=transaction_id)
-
     for attr in TransactionInSchema:
         if attr in payload:
             setattr(transaction, str(attr), payload[attr])
-
     transaction.save()
     return transaction
 
@@ -131,11 +130,3 @@ def delete_transaction(request, payload: List[UUID]):
         transaction.delete()
     return {"success": True}
 
-
-# Get total transactions by date, amount, description, category, month, year
-# Get trends over time
-# Post bulk upload transactions
-# Delete multiple transactions
-# Post transaction refund
-# Post transaction pending
-# Post transaction cancellation

@@ -1,6 +1,7 @@
 from ninja import Query, Router, Schema, FilterSchema
 from typing import List, Optional
 from .models import Month
+from .schemas import MonthIncome, MonthVariableExpense, MonthFixedExpense, MonthSavings
 from ..year.schemas import YearSchema
 from ..year.models import Year
 from uuid import UUID
@@ -17,6 +18,10 @@ class MonthOutSchema(Schema):
     id: UUID
     month: str
     year: YearSchema
+    total_income: Optional[MonthIncome] = None
+    total_fixed_expenses: Optional[MonthFixedExpense] = None
+    total_variable_expenses: Optional[MonthVariableExpense] = None
+    total_savings: Optional[MonthSavings] = None
 
 
 class MonthFilterSchema(FilterSchema):

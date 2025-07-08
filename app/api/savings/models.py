@@ -1,9 +1,11 @@
 from django.db import models
 from ..month.models import Month
+from django.contrib.auth.models import User
 import uuid
 
 
 class Savings(models.Model):
+    # user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     name = models.CharField(max_length=100, null=True)
     budget = models.IntegerField(null=True)
