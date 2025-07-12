@@ -6,7 +6,7 @@ import uuid
 
 
 class Transaction(models.Model):
-    # user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     date = models.DateField()
     amount = models.FloatField()
