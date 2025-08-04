@@ -27,3 +27,4 @@ class MonthSchema(Schema):
     total_fixed_expenses: Optional[MonthFixedExpense] = None
     total_variable_expenses: Optional[MonthVariableExpense] = None
     total_savings: Optional[MonthSavings] = None
+ 

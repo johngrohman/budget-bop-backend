@@ -9,6 +9,7 @@ class Month(models.Model):
     user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     month = models.CharField()
+    date = models.DateField(null=True)
     year = models.ForeignKey(Year, null=True, on_delete=models.CASCADE)
 
     # Put function contents in util files to prevent circular import?

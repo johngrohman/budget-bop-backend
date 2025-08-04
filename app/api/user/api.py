@@ -3,6 +3,21 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
+from ninja.security import HttpBearer
+import secrets
+import string
+
+def generate_api_key(key_length=32):
+    """
+    Generate API keys with optional restrictions
+
+    Args:
+        key_length (int): Length of each API key
+    """
+
+    api_key = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(key_length))
+    return ({ "key": api_key })
+
 
 api = Router()
 
@@ -18,7 +33,7 @@ class CreateUserSchema(Schema):
 
 @api.get("/me", response=UserSchema)
 def get_my_user(request):
-    return request.user
+    return request.auth
 
 @api.post("/", response=UserSchema, auth=None)
 def create_user(request, payload: CreateUserSchema):
@@ -27,7 +42,7 @@ def create_user(request, payload: CreateUserSchema):
     login(request, user)
     return user
 
-@csrf_exempt
+
 @api.post("/login", auth=None)
 def login_view(request, payload: CreateUserSchema):
     user = authenticate(request, username=payload.username, password=payload.password)

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from ninja import NinjaAPI
-from ninja.security import django_auth
+from ninja.security import HttpBearer
 
 from .api.month.api import api as month_router
 from .api.year.api import api as year_router
@@ -13,7 +13,12 @@ from .api.variable_expense.api import api as variable_expense_router
 from .api.fixed_expense.api import api as fixed_expense_router
 from .api.user.api import api as user_router
 
-api: NinjaAPI = NinjaAPI(title="Budget Bop API", version="1.0", auth=django_auth)
+class AuthBearer(HttpBearer):
+    def authenticate(self, request, token):
+        return super().authenticate(request, token)
+
+
+api: NinjaAPI = NinjaAPI(title="Budget Bop API", version="1.0")
 
 api.add_router("/user", user_router, tags=["Users"])
 api.add_router("/years", year_router, tags=["Years"])
@@ -29,3 +34,4 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", api.urls),
 ]
+
