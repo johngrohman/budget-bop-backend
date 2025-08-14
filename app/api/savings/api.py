@@ -33,8 +33,10 @@ def get_savings_by_id(request, savings_id: UUID):
 # Create a savings object
 @api.post("/", response=SavingsOutSchema)
 def post_savings(request, payload: SavingsInSchema):
-    savings = Savings.objects.create(**payload.dict())
-    return savings
+    savings = payload.dict()
+    savings.updated({'user': request.user})
+    created_savings = Savings.objects.create(savings)
+    return created_savings
 
 
 # Update a savings object

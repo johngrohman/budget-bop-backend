@@ -47,8 +47,10 @@ def list_income(request, filters: IncomeFilterSchema = Query(...)):
 
 @api.post("/", response=IncomeOutSchema)
 def post_income(request, payload: IncomeInSchema):
-    income = Income.objects.create(**payload.dict())
-    return income
+    income = payload.dict()
+    income.update({'user': request.user})
+    created_income = Income.objects.create(income)
+    return created_income
 
 
 @api.patch("/{income_id}", response=IncomeOutSchema)

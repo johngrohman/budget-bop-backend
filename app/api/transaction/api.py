@@ -73,6 +73,7 @@ def upload_transaction_list(
                 description=row[7],
                 category=row[8],
                 month_id=month_id,
+                user=request.user
             )
             transactions.append(transaction)
         except (IndexError, ValueError) as e:
@@ -107,8 +108,10 @@ def get_transaction_summary(request, month_id: UUID):
 # Post new transaction
 @api.post("/", response=TransactionOutSchema)
 def post_transaction(request, payload: TransactionInSchema):
-    transaction = Transaction.objects.create(**payload.dict())
-    return transaction
+    transaction = payload.dict()
+    transaction.update({'user': request.user})
+    created_transaction = Transaction.objects.create(transaction)
+    return created_transaction
 
 
 # Patch transaction

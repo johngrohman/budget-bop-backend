@@ -12,6 +12,7 @@ api = Router()
 
 class MonthInSchema(Schema):
     month: str
+    year: UUID
 
 
 class MonthOutSchema(Schema):
@@ -44,8 +45,8 @@ def get_month_by_id(request, month_id: UUID):
 # Create a month
 @api.post("/", response=MonthOutSchema)
 def post_month(request, payload: MonthInSchema):
-    year = get_object_or_404(Year, year=payload.year)
-    result = {"month": payload.month, "year": year}
+    year = get_object_or_404(Year, id=payload.year)
+    result = {"month": payload.month, "year": year, "user": request.user}
     return Month.objects.create(**result)
 
 
@@ -69,5 +70,6 @@ def delete_month(request, month_id: UUID):
 
 @api.get("year/{year_id}", response=List[MonthOutSchema])
 def list_months_in_year(request, year_id: UUID):
+    print(request.headers)
     months = Month.objects.filter(year__id=year_id).order_by('date')
     return months if months.exists() else []

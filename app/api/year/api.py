@@ -34,13 +34,17 @@ def get_year_by_id(request, year_id: UUID):
 # Post a year to the database
 @api.post("/", response=YearOutSchema)
 def post_year(request, payload: YearInSchema):
-    return Year.objects.create(**payload.dict())
+    year = payload.dict()
+    year.update({'user': request.user})
+    return Year.objects.create(**year)
 
 
 # Post a year and populate 12 months
 @api.post("complete/", response=YearOutSchema)
 def post_complete_year(request, payload: YearInSchema):
-    year = Year.objects.create(**payload.dict())
+    year = payload.dict()
+    year.update({'user': request.user})
+    year = Year.objects.create(**year)
     for month in [
         "January",
         "February",
@@ -55,7 +59,7 @@ def post_complete_year(request, payload: YearInSchema):
         "November",
         "December",
     ]:
-        Month.objects.create(**{"month": month, "year": year})
+        Month.objects.create(**{"month": month, "year": year, "user": request.user})
     return year
 
 

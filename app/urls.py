@@ -11,16 +11,12 @@ from .api.time.api import api as time_router
 from .api.income.api import api as income_router
 from .api.variable_expense.api import api as variable_expense_router
 from .api.fixed_expense.api import api as fixed_expense_router
-from .api.user.api import api as user_router
+from .api.auth.api import api as user_router
+from .api.auth.utils import JWTAuth
 
-class AuthBearer(HttpBearer):
-    def authenticate(self, request, token):
-        return super().authenticate(request, token)
+api: NinjaAPI = NinjaAPI(title="Budget Bop API", version="1.0", auth=JWTAuth())
 
-
-api: NinjaAPI = NinjaAPI(title="Budget Bop API", version="1.0")
-
-api.add_router("/user", user_router, tags=["Users"])
+api.add_router("/auth", user_router, tags=["Authentication"])
 api.add_router("/years", year_router, tags=["Years"])
 api.add_router("/months", month_router, tags=["Months"])
 api.add_router("/income", income_router, tags=["Income"])

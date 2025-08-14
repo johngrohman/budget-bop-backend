@@ -2,6 +2,7 @@ from django.db import models
 from ..month.models import Month
 import uuid
 from django.contrib.auth.models import User
+from ...db import UserOwnedModel
 
 
 class Income(models.Model):
@@ -12,6 +13,8 @@ class Income(models.Model):
     expected = models.FloatField(null=True)
     actual = models.FloatField(null=True)
     month = models.ForeignKey(Month, null=True, on_delete=models.CASCADE)
+
+    objects = UserOwnedModel()
 
     def __str__(self):
         return {self.name, self.date, self.expected, self.actual, self.month}

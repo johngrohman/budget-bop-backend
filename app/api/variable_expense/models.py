@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from ..month.models import Month
 import uuid
+from ...db import UserOwnedModel
 
 
 class VariableExpense(models.Model):
@@ -11,6 +12,8 @@ class VariableExpense(models.Model):
     budget = models.FloatField(null=True)
     actual = models.FloatField(null=True)
     month = models.ForeignKey(Month, null=True, on_delete=models.CASCADE)
+
+    objects = UserOwnedModel()
 
     def __str__(self):
         return {

@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models import Sum
 from django.contrib.auth.models import User
 from ..year.models import Year
+from ...db import UserOwnedModel
 
 import uuid
 
@@ -11,6 +12,8 @@ class Month(models.Model):
     month = models.CharField()
     date = models.DateField(null=True)
     year = models.ForeignKey(Year, null=True, on_delete=models.CASCADE)
+
+    objects = UserOwnedModel()
 
     # Put function contents in util files to prevent circular import?
     @property
