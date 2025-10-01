@@ -12,9 +12,9 @@ from .api.income.api import api as income_router
 from .api.variable_expense.api import api as variable_expense_router
 from .api.fixed_expense.api import api as fixed_expense_router
 from .api.auth.api import api as user_router
-from .api.auth.utils import JWTAuth
+from .api.auth.utils import JWTAuthCookie
 
-api: NinjaAPI = NinjaAPI(title="Budget Bop API", version="1.0", auth=JWTAuth())
+api: NinjaAPI = NinjaAPI(title="Budget Bop API", version="1.0", auth=JWTAuthCookie(), csrf=True)
 
 api.add_router("/auth", user_router, tags=["Authentication"])
 api.add_router("/years", year_router, tags=["Years"])

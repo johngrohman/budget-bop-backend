@@ -43,7 +43,7 @@ def get_month_by_id(request, month_id: UUID):
 
 
 # Create a month
-@api.post("/", response=MonthOutSchema)
+@api.post("", response=MonthOutSchema)
 def post_month(request, payload: MonthInSchema):
     year = get_object_or_404(Year, id=payload.year)
     result = {"month": payload.month, "year": year, "user": request.user}

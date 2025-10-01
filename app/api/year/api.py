@@ -19,7 +19,7 @@ class YearOutSchema(Schema):
 
 
 # Get all years stored in database
-@api.get("/", response=List[YearOutSchema])
+@api.get("", response=List[YearOutSchema])
 def get_all_years(request):
     return Year.objects.all()
 
@@ -32,7 +32,7 @@ def get_year_by_id(request, year_id: UUID):
 
 
 # Post a year to the database
-@api.post("/", response=YearOutSchema)
+@api.post("", response=YearOutSchema)
 def post_year(request, payload: YearInSchema):
     year = payload.dict()
     year.update({'user': request.user})

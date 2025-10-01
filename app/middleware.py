@@ -21,17 +21,20 @@ class CurrentUserMiddleware(MiddlewareMixin):
         """
         Attach user to request object
         """
-        auth_header = request.headers.get("Authorization")
-
-        # If there's no authorizaiton header or if it's not Bearer
-        if not auth_header or not auth_header.startswith("Bearer "):
-            request.user = AnonymousUser()
+        try:
+            auth_header = request.COOKIES['access_token']
+        except KeyError:
+            request.user = AnonymousUser
             return
 
-        token = auth_header.replace("Bearer ", "").strip()
+        # If there's no authorizaiton header or if it's not Bearer
+        if not auth_header:
+            request.user = AnonymousUser()
+            return
+        
         # Validate token and set the requests user
         try:
-            payload = validate_access_token(token)
+            payload = validate_access_token(auth_header)
             user_id = payload.get("user_id")
 
             if not user_id:
@@ -42,6 +45,7 @@ class CurrentUserMiddleware(MiddlewareMixin):
                 user = User.objects.get(pk=user_id)
                 request.user = user
                 set_current_user(user)
+                print('request.user', user.id)
             except User.DoesNotExist:
                 request.user = AnonymousUser()
 

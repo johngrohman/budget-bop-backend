@@ -32,7 +32,7 @@ class VariableExpenseInSchema(Schema):
     month_id: Optional[UUID] = None
 
 
-@api.get("/", response=List[VariableExpenseOutSchema])
+@api.get("", response=List[VariableExpenseOutSchema])
 def list_variable_expense(request, filters: VariableExpenseFilterSchema = Query(...)):
     """
     List all variable expenses based on filters
@@ -55,11 +55,11 @@ def get_variable_expenses_in_month(request, month_id: UUID):
     return result
 
 
-@api.post("/", response=VariableExpenseOutSchema)
+@api.post("", response=VariableExpenseOutSchema)
 def post_variable_expense(request, payload: VariableExpenseInSchema):
     variable_expense = payload.dict()
     variable_expense.update({'user': request.user})
-    created_variable_expense = VariableExpense.objects.create(variable_expense)
+    created_variable_expense = VariableExpense.objects.create(**variable_expense)
     return created_variable_expense
 
 
@@ -74,7 +74,7 @@ def patch_variable_expense(
     return variable_expense
 
 
-@api.delete("/")
+@api.delete("")
 def delete_variable_expense(request, payload: List[UUID]):
     for var_exp_id in payload:
         variable_expense = get_object_or_404(VariableExpense, id=var_exp_id)

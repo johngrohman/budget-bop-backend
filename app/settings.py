@@ -55,6 +55,11 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:8000",
+]
+
 SESSION_COOKIE_SAMESITE = 'Lax'
 
 CORS_ALLOW_CREDENTIALS = True

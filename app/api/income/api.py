@@ -35,7 +35,7 @@ class IncomeInSchema(Schema):
     month_id: Optional[UUID] = None
 
 
-@api.get("/", response=List[IncomeOutSchema])
+@api.get("", response=List[IncomeOutSchema])
 def list_income(request, filters: IncomeFilterSchema = Query(...)):
     """
     Get a list of all income records.
@@ -45,11 +45,11 @@ def list_income(request, filters: IncomeFilterSchema = Query(...)):
     return income
 
 
-@api.post("/", response=IncomeOutSchema)
+@api.post("", response=IncomeOutSchema)
 def post_income(request, payload: IncomeInSchema):
     income = payload.dict()
     income.update({'user': request.user})
-    created_income = Income.objects.create(income)
+    created_income = Income.objects.create(**income)
     return created_income
 
 
@@ -62,7 +62,7 @@ def patch_income(request, income_id: UUID, payload: IncomeInSchema):
     return income
 
 
-@api.delete("/")
+@api.delete("")
 def delete_income(request, payload: List[UUID]):
     for inc_id in payload:
         income = get_object_or_404(Income, id=inc_id)

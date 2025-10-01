@@ -13,7 +13,7 @@ api = Router()
 
 
 # Get all savings stored in database
-@api.get("/", response=List[SavingsOutSchema])
+@api.get("", response=List[SavingsOutSchema])
 def list_all_savings(request, filters: SavingsFilterSchema = Query(...)):
     """
     List all savings based on filters
@@ -31,11 +31,11 @@ def get_savings_by_id(request, savings_id: UUID):
 
 
 # Create a savings object
-@api.post("/", response=SavingsOutSchema)
+@api.post("", response=SavingsOutSchema)
 def post_savings(request, payload: SavingsInSchema):
     savings = payload.dict()
-    savings.updated({'user': request.user})
-    created_savings = Savings.objects.create(savings)
+    savings.update({'user': request.user})
+    created_savings = Savings.objects.create(**savings)
     return created_savings
 
 
@@ -50,7 +50,7 @@ def patch_savings(request, savings_id: UUID, payload: SavingsInSchema):
 
 
 # Delete a savings by the id
-@api.delete("/")
+@api.delete("")
 def delete_savings(request, payload: List[UUID]):
     for sav_id in payload:
         savings = get_object_or_404(Savings, id=sav_id)

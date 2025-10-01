@@ -1,5 +1,6 @@
 from ninja import Router, Schema
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.core import serializers
 from django.contrib.auth.models import User
@@ -19,7 +20,7 @@ api = Router()
 def get_my_user(request):
     return request.auth
 
-@api.post("/", response={200: LoginResponse, 409: ErrorSchema}, auth=None)
+@api.post("", response={200: LoginResponse, 409: ErrorSchema}, auth=None)
 def create_user(request, payload: CreateUserSchema):
 
     username_unique = User.objects.filter(username=payload.username)
@@ -41,8 +42,9 @@ def create_user(request, payload: CreateUserSchema):
         user=UserSchema.from_orm(user)
     )
 
-
 @api.post("/login", auth=None, response={200: LoginResponse, 401: ErrorSchema})
+@csrf_exempt
+@ensure_csrf_cookie
 def login_view(request, payload: LoginSchema):
     user = authenticate(username=payload.username, password=payload.password)
     if user is None:
@@ -51,14 +53,23 @@ def login_view(request, payload: LoginSchema):
     
     access_token = create_access_token({'user_id': user.id})
     refresh_token = create_refresh_token({'user_id': user.id})
+    token = get_token(request)
 
     print(f"User {user.username} logged in successfully")
     response = JsonResponse({
-        "access_token": access_token,
-        "token_type": "Bearer",
-        "expires_in": 900,
-        "user": 'test'
+        "user": 'test',
+        "csrf_token": token,
     })
+
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        secure=True,
+        samesite="Strict",
+        max_age=900,
+        path="/api/",
+    )
 
     response.set_cookie(
         key="refresh_token",
@@ -67,11 +78,12 @@ def login_view(request, payload: LoginSchema):
         secure=True,
         samesite="Strict",
         max_age=7 * 24 * 3600,
-        path="*",
+        path="/api/auth/refresh",
     )
 
     return response
 
+@csrf_exempt
 @api.post('/refresh', auth=None)
 def refresh_access_token(request):
     crt = request.COOKIES.get('refresh_token')
@@ -82,11 +94,18 @@ def refresh_access_token(request):
     new_refresh_token = create_refresh_token({'user_id': user_id})
 
     response = JsonResponse({
-        "access_token": new_access_token,
-        "token_type": "Bearer",
-        "expires_in": 900,
         "user": 'test'
     })
+
+    response.set_cookie(
+        key="access_token",
+        value=new_access_token,
+        httponly=False,
+        secure=True,
+        samesite="Strict",
+        max_age=900,
+        path="/api/",
+    )
 
     response.set_cookie(
         key="refresh_token",
@@ -95,7 +114,7 @@ def refresh_access_token(request):
         secure=True,
         samesite="Strict",
         max_age=7 * 24 * 3600,
-        path="*",
+        path="/api/auth/refresh",
     )
 
     return response

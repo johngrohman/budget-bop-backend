@@ -1,6 +1,6 @@
 from datetime import timedelta, datetime
 import jwt
-from ninja.security import HttpBearer
+from ninja.security import HttpBearer, APIKeyCookie
 from ninja.errors import HttpError
 from django.contrib.auth.models import User
 
@@ -33,21 +33,20 @@ def validate_refresh_token(token: str):
         raise HttpError(401, "Token expired")
     except jwt.InvalidTokenError:
         raise HttpError(401, "Invalid token")
-    except jwt.JWTError:
+    except:
         return None
 
-
-
-class JWTAuth(HttpBearer):
-    def authenticate(self, request, token):
+class JWTAuthCookie(APIKeyCookie):
+    def authenticate(self, request, key):
         try:
+            token = request.COOKIES['access_token']
             payload = validate_access_token(token)
             user_id = payload.get('user_id')
         except jwt.ExpiredSignatureError:
             raise HttpError(401, "Token expired")
         except jwt.InvalidTokenError:
             raise HttpError(401, "Invalid token")
-        except jwt.JWTError:
+        except:
             return None
             
         if not user_id:

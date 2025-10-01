@@ -84,15 +84,13 @@ def upload_transaction_list(
     return {"message": f"Inserted {len(transactions)} transactions successfully."}
 
 
-# Get transaction and filter by date, amount, description, category, month, year
-@api.get("/list", response=List[TransactionOutSchema])
+@api.get("", response=List[TransactionOutSchema])
 def list_transactions(request, filters: TransactionFilterSchema = Query(...)):
     transactions = Transaction.objects.all()
     transactions = filters.filter(transactions)
     return transactions
 
 
-# Get transaction by id
 @api.get("/{transaction_id}", response=TransactionOutSchema)
 def get_transaction_by_id(request, transaction_id: UUID):
     transaction = get_object_or_404(Transaction, id=transaction_id)
@@ -105,16 +103,14 @@ def get_transaction_summary(request, month_id: UUID):
     return variable_expenses
 
 
-# Post new transaction
-@api.post("/", response=TransactionOutSchema)
+@api.post("", response=TransactionOutSchema)
 def post_transaction(request, payload: TransactionInSchema):
     transaction = payload.dict()
     transaction.update({'user': request.user})
-    created_transaction = Transaction.objects.create(transaction)
+    created_transaction = Transaction.objects.create(**transaction)
     return created_transaction
 
 
-# Patch transaction
 @api.patch("/{transaction_id}", response=TransactionOutSchema)
 def patch_transaction(request, transaction_id: UUID, payload: TransactionInSchema):
     transaction = get_object_or_404(Transaction, id=transaction_id)
@@ -125,11 +121,9 @@ def patch_transaction(request, transaction_id: UUID, payload: TransactionInSchem
     return transaction
 
 
-# Delete Transaction
-@api.delete("/")
+@api.delete("")
 def delete_transaction(request, payload: List[UUID]):
     for trans_id in payload:
         transaction = get_object_or_404(Transaction, id=trans_id)
         transaction.delete()
     return {"success": True}
-

@@ -4,7 +4,6 @@ from datetime import datetime
 from datetime import date as dateType
 from ..month.schemas import MonthSchema
 from uuid import UUID
-from ..auth.utils import JWTAuth
 from .models import FixedExpense
 from django.shortcuts import get_object_or_404
 
@@ -36,7 +35,7 @@ class FixedExpenseInSchema(Schema):
     month_id: Optional[UUID] = None
 
 
-@api.get("/", response=List[FixedExpenseOutSchema])
+@api.get("", response=List[FixedExpenseOutSchema])
 def list_fixed_expense(request, filters: FixedExpenseFilterSchema = Query(...)):
     """
     List all fixed expenses based on filters
@@ -46,11 +45,11 @@ def list_fixed_expense(request, filters: FixedExpenseFilterSchema = Query(...)):
     return fixed_expenses
 
 
-@api.post("/", response=FixedExpenseOutSchema)
+@api.post("", response=FixedExpenseOutSchema)
 def post_fixed_expense(request, payload: FixedExpenseInSchema):
     fixed_expense = payload.dict()
     fixed_expense.update({'user': request.user})
-    created_fixed_expense = FixedExpense.objects.create(fixed_expense)
+    created_fixed_expense = FixedExpense.objects.create(**fixed_expense)
     return created_fixed_expense
 
 @api.patch("/{fixed_expense_id}", response=FixedExpenseOutSchema)
@@ -62,7 +61,7 @@ def patch_fixed_expense(request, fixed_expense_id: UUID, payload: FixedExpenseIn
     return fixed_expense
 
 
-@api.delete("/")
+@api.delete("")
 def delete_fixed_expense(request, payload: List[UUID]):
     for fix_exp_id in payload:
         fixed_expense = get_object_or_404(FixedExpense, id=fix_exp_id)
