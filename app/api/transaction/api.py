@@ -5,7 +5,7 @@ from ninja import Query, Router, Schema, FilterSchema, File, Form
 from ninja.files import UploadedFile
 from typing import List
 from .models import Transaction
-from ..month.schemas import MonthSchema
+from ..month.schemas import MonthSchemaShallow
 from datetime import date, datetime
 from uuid import UUID
 from django.shortcuts import get_object_or_404
@@ -34,7 +34,7 @@ class TransactionOutSchema(Schema):
     amount: float
     description: str
     category: str
-    month: MonthSchema
+    month: MonthSchemaShallow
 
 
 class TransactionFilterSchema(FilterSchema):
@@ -80,7 +80,7 @@ def upload_transaction_list(
             print(f"Skipping invalid row {row}: {e}")
 
     Transaction.objects.bulk_create(transactions, ignore_conflicts=False)
-    sync_vars_trans(month_id=month_id)
+    sync_vars_trans(request, month_id=month_id)
     return {"message": f"Inserted {len(transactions)} transactions successfully."}
 
 

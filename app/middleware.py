@@ -45,7 +45,6 @@ class CurrentUserMiddleware(MiddlewareMixin):
                 user = User.objects.get(pk=user_id)
                 request.user = user
                 set_current_user(user)
-                print('request.user', user.id)
             except User.DoesNotExist:
                 request.user = AnonymousUser()
 

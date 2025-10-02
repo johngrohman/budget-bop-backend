@@ -70,6 +70,5 @@ def delete_month(request, month_id: UUID):
 
 @api.get("year/{year_id}", response=List[MonthOutSchema])
 def list_months_in_year(request, year_id: UUID):
-    print(request.headers)
     months = Month.objects.filter(year__id=year_id).order_by('date')
     return months if months.exists() else []

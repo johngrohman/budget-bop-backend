@@ -10,7 +10,7 @@ def format_date(date_str):
     return datetime.strptime(date_str, "%m/%d/%Y").strftime("%Y-%m-%d")
 
 
-def sync_vars_trans(month_id: UUID) -> None:
+def sync_vars_trans(request, month_id: UUID) -> None:
     """
     Iterates over transactions in a given month and **Creates** or **Updates** variable expenses for that month
 
@@ -30,6 +30,7 @@ def sync_vars_trans(month_id: UUID) -> None:
         variableExpense, _ = VariableExpense.objects.get_or_create(
             month_id=month_id,
             name=category_str,
+            user=request.user
         )
 
         # Update variable expense actual amounts
